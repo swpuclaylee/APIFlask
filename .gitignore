@@ -100,3 +100,6 @@ config.local.py
 # Coverage reports
 .coverage
 .coverage.*
+
+# other
+requirements-dev.txt
