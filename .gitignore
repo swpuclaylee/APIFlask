@@ -1,28 +1,41 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# C extensions
 *.so
-.python-version
 
-# Virtual environments
-.venv/
-venv/
-env/
-ENV/
-
-# Package and build files
+# Distribution / packaging
+.Python
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 *.egg-info/
+.installed.cfg
 *.egg
-pip-wheel-metadata/
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
 
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test and coverage reports
+# Unit test / coverage reports
 htmlcov/
 .tox/
 .nox/
@@ -32,16 +45,112 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
+.hypothesis/
 .pytest_cache/
 
-# IDE
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+media/
+static/
+staticfiles/
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Web framework specific
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+media/
+static/
+
+# Flask
+instance/
+.webassets-cache
+
+# FastAPI
+__pycache__/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE/Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -50,56 +159,103 @@ coverage.xml
 ehthumbs.db
 Thumbs.db
 
-# Database
-*.db
-*.sqlite3
-*.sqlite
-
 # Logs
-*.log
 logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Environment variables
-.env
-.env.local
-.env.*.local
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
 
-# Development
-instance/
+# Dependency directories
+node_modules/
 
-# Celery
-celerybeat-schedule
-celerybeat.pid
+# Optional npm cache directory
+.npm
 
-# Redis
-dump.rdb
+# Optional eslint cache
+.eslintcache
 
-# Static and media files (if collected separately)
-staticfiles/
-media/
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# Optional REPL history
+.node_repl_history
 
-# macOS
-.AppleDouble
-.LSOverride
+# Output of 'npm pack'
+*.tgz
 
-# Windows
-[Tt]humbs.db
+# Yarn Integrity file
+.yarn-integrity
 
-# Project specific configuration files
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Configuration files with sensitive data
 config.py
 settings.py
 local_settings.py
-config.local.py
+.env*
+!.env.example
 
-# Migration files (if you want to ignore them, but usually should be committed)
+# Upload directories
+uploads/
+user_uploads/
+
+# Cache directories
+cache/
+.cache/
+
+# Session files
+sessions/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+
+# Backup files
+*.bak
+*.backup
+
+# Migration files (uncomment if you want to ignore them)
 # migrations/
 
-# Coverage reports
-.coverage
-.coverage.*
+# Compiled CSS and JS (if using preprocessing)
+*.css.map
+*.js.map
+
+# Webpack bundles
+bundle.js
+bundle.css
 
 # other
 requirements-dev.txt
