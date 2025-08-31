@@ -1,7 +1,6 @@
 from apiflask import APIBlueprint
 
-# 创建API v1蓝图
-bp = APIBlueprint('v1', __name__)
+users_bp = APIBlueprint('users', __name__, tag='Users')
+auth_bp = APIBlueprint('auth', __name__, tag='Authentication')
 
-# 导入所有路由模块（自动注册路由）
-from . import users
+from . import users, auth

@@ -5,9 +5,8 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+from app.utils import jwt_error_response, error_response
 from config import config
-from services.token_service import TokenService
-from utils import jwt_error_response, error_response
 
 # 扩展实例（在应用上下文之外创建）
 db = SQLAlchemy()
@@ -48,10 +47,10 @@ def create_app(config_name='development'):
 def register_blueprints(app):
     """注册蓝图"""
     # 导入蓝图
-    from app.api.v1 import bp as api_v1_bp
+    from app.api.v1 import users_bp, auth_bp
 
-    # 注册API v1蓝图
-    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
+    app.register_blueprint(users_bp, url_prefix='/api/v1')
+    app.register_blueprint(auth_bp, url_prefix='/api/v1')
 
 
 def register_error_handlers(app):
@@ -80,13 +79,14 @@ def register_error_handlers(app):
 
 def configure_jwt(app):
     """配置JWT回调函数"""
-    token_service = TokenService()
 
     @jwt.token_in_blocklist_loader
     def check_if_token_revoked(jwt_header, jwt_payload):
         """检查token是否被撤销（黑名单机制）"""
+        from app.services.token_service import TokenService
+
         jti = jwt_payload['jti']  # JWT ID
-        return token_service.is_token_revoked(jti)
+        return TokenService.is_token_revoked(jti)
 
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):

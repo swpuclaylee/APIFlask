@@ -1,6 +1,7 @@
+from datetime import timedelta
+
 import redis
 from flask import current_app
-from datetime import timedelta
 
 
 class TokenService:

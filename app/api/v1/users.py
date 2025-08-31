@@ -7,13 +7,13 @@ from app.schemas import (
     UserUpdateSchema,
     UserQuerySchema
 )
-from app.services import UserService
+from app.services.user_service import UserService
 from app.utils import (
     success_response,
     error_response,
     paginate_response
 )
-from . import bp
+from . import users_bp as bp
 
 
 @bp.get('/users')

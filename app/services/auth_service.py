@@ -2,7 +2,8 @@ from datetime import timedelta
 
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity
 
-from app.services import UserService, TokenService
+from app.services.token_service import TokenService
+from app.services.user_service import UserService
 
 
 class AuthService:
