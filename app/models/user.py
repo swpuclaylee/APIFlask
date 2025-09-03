@@ -22,8 +22,6 @@ class User(BaseModel):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
-    # posts = db.relationship('Post', backref='author', lazy='dynamic', cascade='all, delete-orphan')
-    # comments = db.relationship('Comment', backref='author', lazy='dynamic', cascade='all, delete-orphan')
     roles = db.relationship('Role', secondary=user_roles, backref=db.backref('users', lazy='dynamic'))
 
     def set_password(self, password):

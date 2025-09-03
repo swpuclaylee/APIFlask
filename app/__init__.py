@@ -70,11 +70,10 @@ def create_app(config_name='development'):
 def register_blueprints(app):
     """注册蓝图"""
     # 导入蓝图
-    from app.api.v1 import users_bp, auth_bp, roles_bp
+    from app.api.v1 import users_bp, auth_bp
 
     app.register_blueprint(users_bp, url_prefix='/api/v1')
     app.register_blueprint(auth_bp, url_prefix='/api/v1')
-    app.register_blueprint(roles_bp, url_prefix='/api/v1')
 
 
 def register_error_handlers(app):

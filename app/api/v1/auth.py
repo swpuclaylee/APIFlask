@@ -1,8 +1,15 @@
 from flask_jwt_extended import jwt_required, get_jwt
 
-from app.schemas.auth import LoginSchema, PasswordChangeSchema
-from app.schemas.base import ResponseSchema
-from app.schemas.user import UserRegisterSchema, UserSchema
+from app.schemas import (
+    LoginSchema,
+    PasswordChangeSchema,
+    ResponseSchema,
+    UserRegisterSchema,
+    UserSchema
+)
+# from app.schemas.auth import LoginSchema, PasswordChangeSchema
+# from app.schemas.base import ResponseSchema
+# from app.schemas.user import UserRegisterSchema, UserSchema
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
 from app.utils.response import success_response, error_response
