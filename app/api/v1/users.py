@@ -9,10 +9,14 @@ from app.schemas import (
     UserQuerySchema
 )
 from app.services.user_service import UserService
+from app.utils import (
+    success_response,
+    error_response,
+    paginate_response
+)
 from app.utils.logger import log_api_call
 from app.utils.permissions import Permissions
 from app.utils.permissions import require_permission, require_resource_action
-from app.utils.response import success_response, error_response, paginate_response
 from . import users_bp as bp
 
 
@@ -82,4 +86,3 @@ def delete_user(user_id):
         return success_response()
     except Exception as e:
         return error_response(f'用户删除失败：{str(e)}')
-

@@ -9,7 +9,7 @@ from app.schemas import (
 )
 from app.services.auth_service import AuthService
 from app.services.user_service import UserService
-from app.utils.response import success_response, error_response
+from app.utils import success_response, error_response
 from . import auth_bp as bp
 
 

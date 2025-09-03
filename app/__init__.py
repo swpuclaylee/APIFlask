@@ -5,8 +5,11 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from app.utils.response import jwt_error_response, error_response
-from app.utils.logger import setup_logging
+from app.utils import (
+    jwt_error_response,
+    error_response,
+    setup_logging
+)
 from config import config
 
 # 扩展实例（在应用上下文之外创建）
