@@ -1,7 +1,8 @@
 from marshmallow import Schema, fields, validate
+from .base import BaseSchema
 
 
-class LoginSchema(Schema):
+class LoginSchema(BaseSchema):
     """登录请求Schema"""
     username = fields.Str(required=True, error_messages={'required': 'Username is required'})
     password = fields.Str(
@@ -11,7 +12,7 @@ class LoginSchema(Schema):
     )
 
 
-class PasswordChangeSchema(Schema):
+class PasswordChangeSchema(BaseSchema):
     """修改密码Schema"""
     current_password = fields.Str(required=True, load_only=True)
     new_password = fields.Str(

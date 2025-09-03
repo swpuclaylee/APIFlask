@@ -5,7 +5,8 @@ from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
-from app.utils import jwt_error_response, error_response
+from app.utils.response import jwt_error_response, error_response
+from app.utils.logger import setup_logging
 from config import config
 
 # 扩展实例（在应用上下文之外创建）
@@ -19,12 +20,31 @@ def create_app(config_name='development'):
     # 创建APIFlask应用实例
     app = APIFlask(__name__)
 
+    app = APIFlask(__name__)
+
+    # 直接配置安全方案
+    app.config['OPENAPI_VERSION'] = '3.0.2'
+
+    # 配置认证方案
+    app.config['API_TITLE'] = 'Your API'
+    app.config['API_VERSION'] = 'v1'
+
+    # 在这里直接添加安全方案
+    app.config['SECURITY_SCHEMES'] = {
+        'bearerAuth': {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT'
+        }
+    }
+
     # 加载配置
     app.config.from_object(config[config_name])
 
     # 初始化，将db实例绑定到当前app
     db.init_app(app)
     migrate.init_app(app, db)
+    from app import models
 
     # 初始化JWT
     jwt.init_app(app)
@@ -40,6 +60,9 @@ def create_app(config_name='development'):
 
     # 注册错误处理器
     register_error_handlers(app)
+
+    # 日志
+    app.loggers = setup_logging(app)
 
     return app
 
@@ -115,7 +138,7 @@ def configure_jwt(app):
     @jwt.additional_claims_loader
     def add_claims_to_jwt(identity):
         """向JWT添加额外的声明"""
-        from app.services import UserService
+        from app.services.user_service import UserService
         user = UserService.get_user_by_id(identity)
         return {
             'is_admin': user.is_admin if user else False,

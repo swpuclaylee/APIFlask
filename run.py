@@ -11,8 +11,8 @@ config_name = os.getenv('FLASK_ENV', 'development')
 app = create_app(config_name)
 
 if __name__ == '__main__':
-    with app.app_context():
-        RBACInitService.init_all()
+    # with app.app_context():
+    #     RBACInitService.init_all()
 
     # 启动应用
     app.run(

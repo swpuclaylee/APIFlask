@@ -4,6 +4,8 @@ from .base import BaseModel
 
 class Permission(BaseModel):
     """权限模型"""
+    __tablename__ = 'permissions'
+
     name = db.Column(db.String(100), unique=True, nullable=False)  # 如：user:read, order:create
     description = db.Column(db.String(255))
     resource = db.Column(db.String(50), nullable=False)  # 资源名称：user, order, product

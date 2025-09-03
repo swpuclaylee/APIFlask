@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 
 from app import db
-from app.models import User
+from app.models.user import User
 
 
 class UserService:

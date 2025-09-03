@@ -11,7 +11,6 @@ class AuthService:
     def authenticate_user(username, password):
         """用户认证"""
         user = UserService.get_user_by_username(username)
-
         if not user or not user.check_password(password):
             return None, "Invalid username or password"
 

@@ -1,6 +1,6 @@
 from typing import List
 
-from app.models import User
+from app.models.user import User
 
 
 class PermissionService:
