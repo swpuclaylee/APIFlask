@@ -1,4 +1,3 @@
-from flask import current_app
 from flask_jwt_extended import jwt_required
 
 from app.schemas import (
@@ -8,7 +7,9 @@ from app.schemas import (
     UserUpdateSchema,
     UserQuerySchema
 )
-from app.services.user_service import UserService
+from app.services import (
+    UserService
+)
 from app.utils import (
     success_response,
     error_response,
@@ -24,7 +25,6 @@ from . import users_bp as bp
 @bp.output(ResponseSchema)
 def get_users(query_params):
     """获取用户列表"""
-    current_app.loggers['business'].info('获取用户列表')
     pagination = UserService.get_users(
         page=query_params.get('page', 1),
         per_page=query_params.get('per_page', 20),

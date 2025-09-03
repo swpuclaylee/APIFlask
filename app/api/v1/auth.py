@@ -7,9 +7,13 @@ from app.schemas import (
     UserRegisterSchema,
     UserSchema
 )
-from app.services.auth_service import AuthService
-from app.services.user_service import UserService
-from app.utils import success_response, error_response
+from app.services import (
+    AuthService, UserService
+)
+from app.utils import (
+    success_response,
+    error_response
+)
 from . import auth_bp as bp
 
 

@@ -1,7 +1,8 @@
-import time
 import functools
-from flask import request, current_app, g
 import logging
+import time
+
+from flask import request, current_app, g
 
 
 # 性能监控装饰器
