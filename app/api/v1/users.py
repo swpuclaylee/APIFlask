@@ -12,11 +12,9 @@ from app.services.user_service import UserService
 from app.utils import (
     success_response,
     error_response,
-    paginate_response
+    paginate_response,
+    log_api_call
 )
-from app.utils.logger import log_api_call
-from app.utils.permissions import Permissions
-from app.utils.permissions import require_permission, require_resource_action
 from . import users_bp as bp
 
 
@@ -24,7 +22,6 @@ from . import users_bp as bp
 @bp.get('/users')
 @bp.input(UserQuerySchema, location='query')
 @bp.output(ResponseSchema)
-@require_permission(Permissions.USER_READ)
 def get_users(query_params):
     """获取用户列表"""
     current_app.loggers['business'].info('获取用户列表')
@@ -53,7 +50,6 @@ def get_user(user_id):
 @bp.post('/users')
 @bp.input(UserCreateSchema)
 @bp.output(ResponseSchema)
-@require_resource_action('user', 'create')
 def create_user(json_data):
     """创建用户"""
     try:
