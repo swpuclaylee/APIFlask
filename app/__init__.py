@@ -18,25 +18,8 @@ jwt = JWTManager()
 def create_app(config_name='development'):
     """"应用工厂函数"""
     # 创建APIFlask应用实例
-    app = APIFlask(__name__)
 
     app = APIFlask(__name__)
-
-    # 直接配置安全方案
-    app.config['OPENAPI_VERSION'] = '3.0.2'
-
-    # 配置认证方案
-    app.config['API_TITLE'] = 'Your API'
-    app.config['API_VERSION'] = 'v1'
-
-    # 在这里直接添加安全方案
-    app.config['SECURITY_SCHEMES'] = {
-        'bearerAuth': {
-            'type': 'http',
-            'scheme': 'bearer',
-            'bearerFormat': 'JWT'
-        }
-    }
 
     # 加载配置
     app.config.from_object(config[config_name])

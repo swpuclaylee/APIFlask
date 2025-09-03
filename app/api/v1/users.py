@@ -8,8 +8,6 @@ from app.schemas import (
     UserUpdateSchema,
     UserQuerySchema
 )
-# from app.schemas.base import ResponseSchema
-# from app.schemas.user import UserCreateSchema, UserSchema, UserUpdateSchema, UserQuerySchema
 from app.services.user_service import UserService
 from app.utils.logger import log_api_call
 from app.utils.permissions import Permissions
