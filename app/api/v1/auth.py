@@ -16,7 +16,7 @@ from app.utils import (
     error_response
 )
 
-auth_bp = APIBlueprint('auth', __name__, tag='Authentication')
+auth_bp = APIBlueprint('auth', __name__, url_prefix='/api/v1/auth', tag='Authentication')
 
 
 @auth_bp.post('/auth/register')

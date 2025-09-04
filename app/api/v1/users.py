@@ -18,7 +18,7 @@ from app.utils import (
     log_api_call
 )
 
-users_bp = APIBlueprint('users', __name__, tag='Users')
+users_bp = APIBlueprint('users', __name__, url_prefix='/api/v1/users', tag='Users')
 
 
 @log_api_call
