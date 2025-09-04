@@ -23,9 +23,11 @@ def create_app(config_name='development'):
     config_obj = config[config_name]
 
     # 创建APIFlask应用实例
-    app = APIFlask(__name__,
-                   title=config_obj.APIFLASK_TITLE,
-                   version=config_obj.APIFLASK_VERSION)
+    app = APIFlask(
+        __name__,
+        title=config_obj.APIFLASK_TITLE,
+        version=config_obj.APIFLASK_VERSION
+    )
 
     # 加载配置
     app.config.from_object(config_obj)

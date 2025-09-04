@@ -31,7 +31,7 @@ class AuthService:
 
         # 生成访问令牌（短期）
         access_token = create_access_token(
-            identity=user.id,
+            identity=str(user.id),
             additional_claims=additional_claims,
             expires_delta=timedelta(hours=1)
         )
@@ -66,7 +66,7 @@ class AuthService:
         }
 
         new_access_token = create_access_token(
-            identity=user.id,
+            identity=str(user.id),
             additional_claims=additional_claims,
             expires_delta=timedelta(hours=1)
         )
