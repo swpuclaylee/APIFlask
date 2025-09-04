@@ -7,7 +7,7 @@ class BaseSchema(Schema):
     updated_at = fields.DateTime(dump_only=True, format='%Y-%m-%d %H:%M:%S')
 
 
-class PaginationSchema(BaseSchema):
+class PaginationSchema(Schema):
     page = fields.Int()
     per_page = fields.Int()
     total = fields.Int()
@@ -16,7 +16,7 @@ class PaginationSchema(BaseSchema):
     has_prev = fields.Bool()
 
 
-class ResponseSchema(BaseSchema):
+class ResponseSchema(Schema):
     code = fields.Int()
     msg = fields.Str()
     data = fields.Raw()  # 可以是任意类型

@@ -1,3 +1,4 @@
+from apiflask import APIBlueprint
 from flask_jwt_extended import jwt_required
 
 from app.schemas import (
@@ -16,28 +17,30 @@ from app.utils import (
     paginate_response,
     log_api_call
 )
-from . import users_bp as bp
+
+users_bp = APIBlueprint('users', __name__, tag='Users')
 
 
 @log_api_call
-@bp.get('/users')
-@bp.input(UserQuerySchema, location='query')
-@bp.output(ResponseSchema)
-def get_users(query_params):
+@users_bp.get('/users')
+@users_bp.input(UserQuerySchema, location='query')
+@users_bp.output(ResponseSchema)
+@jwt_required()
+def get_users(query_data):
     """获取用户列表"""
     pagination = UserService.get_users(
-        page=query_params.get('page', 1),
-        per_page=query_params.get('per_page', 20),
-        query=query_params.get('query'),
-        is_active=query_params.get('is_active'),
-        is_admin=query_params.get('is_admin')
+        page=query_data.get('page', 1),
+        per_page=query_data.get('per_page', 20),
+        query=query_data.get('query'),
+        is_active=query_data.get('is_active'),
+        is_admin=query_data.get('is_admin')
     )
 
     return paginate_response(pagination, UserSchema)
 
 
-@bp.get('/users/<int:user_id>')
-@bp.output(ResponseSchema)
+@users_bp.get('/users/<int:user_id>')
+@users_bp.output(ResponseSchema)
 @jwt_required()
 def get_user(user_id):
     """获取单个用户"""
@@ -47,9 +50,10 @@ def get_user(user_id):
     return success_response(UserSchema().dump(user))
 
 
-@bp.post('/users')
-@bp.input(UserCreateSchema)
-@bp.output(ResponseSchema)
+@users_bp.post('/users')
+@users_bp.input(UserCreateSchema)
+@users_bp.output(ResponseSchema)
+@jwt_required()
 def create_user(json_data):
     """创建用户"""
     try:
@@ -59,9 +63,9 @@ def create_user(json_data):
         return error_response(f'用户创建失败：{str(e)}')
 
 
-@bp.put('/users/<int:user_id>')
-@bp.input(UserUpdateSchema)
-@bp.output(ResponseSchema)
+@users_bp.put('/users/<int:user_id>')
+@users_bp.input(UserUpdateSchema)
+@users_bp.output(ResponseSchema)
 @jwt_required()
 def update_user(user_id, json_data):
     """更新用户"""
@@ -72,8 +76,8 @@ def update_user(user_id, json_data):
         return error_response(f'用户更新失败：{str(e)}')
 
 
-@bp.delete('/users/<int:user_id>')
-@bp.output(ResponseSchema)
+@users_bp.delete('/users/<int:user_id>')
+@users_bp.output(ResponseSchema)
 @jwt_required()
 def delete_user(user_id):
     """删除用户"""

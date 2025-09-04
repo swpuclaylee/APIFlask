@@ -1,3 +1,4 @@
+from apiflask import APIBlueprint
 from flask_jwt_extended import jwt_required, get_jwt
 
 from app.schemas import (
@@ -14,13 +15,14 @@ from app.utils import (
     success_response,
     error_response
 )
-from . import auth_bp as bp
+
+auth_bp = APIBlueprint('auth', __name__, tag='Authentication')
 
 
-@bp.post('/auth/register')
-@bp.input(UserRegisterSchema)
-@bp.output(ResponseSchema)
-@bp.doc(
+@auth_bp.post('/auth/register')
+@auth_bp.input(UserRegisterSchema)
+@auth_bp.output(ResponseSchema)
+@auth_bp.doc(
     summary='用户注册',
     description='注册新用户并返回访问令牌'
 )
@@ -42,10 +44,10 @@ def register(json_data):
         return error_response(f'注册失败：{e}')
 
 
-@bp.post('/auth/login')
-@bp.input(LoginSchema)
-@bp.output(ResponseSchema)
-@bp.doc(
+@auth_bp.post('/auth/login')
+@auth_bp.input(LoginSchema)
+@auth_bp.output(ResponseSchema)
+@auth_bp.doc(
     summary='用户登录',
     description='用户登录并返回访问令牌和刷新令牌'
 )
@@ -63,13 +65,13 @@ def login(json_data):
     return success_response(tokens)
 
 
-@bp.post('/auth/refresh')
-@bp.output(ResponseSchema)
-@bp.doc(
-    summary='刷新访问令牌',
-    description='使用刷新令牌获取新的访问令牌',
-    security=[{'BearerAuth': []}]
-)
+@auth_bp.post('/auth/refresh')
+@auth_bp.output(ResponseSchema)
+# @auth_bp.doc(
+#     summary='刷新访问令牌',
+#     description='使用刷新令牌获取新的访问令牌',
+#     security=[{'BearerAuth': []}]
+# )
 @jwt_required(refresh=True)  # 需要refresh token
 def refresh():
     """刷新访问令牌"""
@@ -81,13 +83,13 @@ def refresh():
     return success_response(tokens)
 
 
-@bp.post('/auth/logout')
-@bp.doc(
-    summary='用户登出',
-    description='撤销当前访问令牌',
-    security=[{'BearerAuth': []}]
-)
-@bp.output(ResponseSchema)
+@auth_bp.post('/auth/logout')
+# @auth_bp.doc(
+#     summary='用户登出',
+#     description='撤销当前访问令牌',
+#     security=[{'BearerAuth': []}]
+# )
+@auth_bp.output(ResponseSchema)
 @jwt_required()
 def logout():
     """用户登出"""
@@ -99,13 +101,13 @@ def logout():
         return error_response(f'登出失败：{e}')
 
 
-@bp.get('/auth/me')
-@bp.output(ResponseSchema)
-@bp.doc(
-    summary='获取当前用户信息',
-    description='获取当前登录用户的详细信息',
-    security=[{'BearerAuth': []}]
-)
+@auth_bp.get('/auth/me')
+@auth_bp.output(ResponseSchema)
+# @auth_bp.doc(
+#     summary='获取当前用户信息',
+#     description='获取当前登录用户的详细信息',
+#     security=[{'BearerAuth': []}]
+# )
 @jwt_required()
 def get_current_user():
     """获取当前用户信息"""
@@ -116,14 +118,14 @@ def get_current_user():
     return success_response(UserSchema().dump(user))
 
 
-@bp.put('/auth/change-password')
-@bp.input(PasswordChangeSchema)
-@bp.doc(
-    summary='修改密码',
-    description='修改当前用户的密码',
-    security=[{'BearerAuth': []}]
-)
-@bp.output(ResponseSchema)
+@auth_bp.put('/auth/change-password')
+@auth_bp.input(PasswordChangeSchema)
+# @auth_bp.doc(
+#     summary='修改密码',
+#     description='修改当前用户的密码',
+#     security=[{'BearerAuth': []}]
+# )
+@auth_bp.output(ResponseSchema)
 @jwt_required()
 def change_password(json_data):
     """修改密码"""

@@ -20,12 +20,15 @@ jwt = JWTManager()
 
 def create_app(config_name='development'):
     """"应用工厂函数"""
-    # 创建APIFlask应用实例
+    config_obj = config[config_name]
 
-    app = APIFlask(__name__)
+    # 创建APIFlask应用实例
+    app = APIFlask(__name__,
+                   title=config_obj.APIFLASK_TITLE,
+                   version=config_obj.APIFLASK_VERSION)
 
     # 加载配置
-    app.config.from_object(config[config_name])
+    app.config.from_object(config_obj)
 
     # 初始化，将db实例绑定到当前app
     db.init_app(app)
@@ -56,7 +59,11 @@ def create_app(config_name='development'):
 def register_blueprints(app):
     """注册蓝图"""
     # 导入蓝图
-    from app.api.v1 import users_bp, auth_bp
+    from app.api.v1.auth import auth_bp
+    from app.api.v1.users import users_bp
+
+    users_bp.security = [{'BearerAuth': []}]
+    auth_bp.security = [{'BearerAuth': []}]
 
     app.register_blueprint(users_bp, url_prefix='/api/v1')
     app.register_blueprint(auth_bp, url_prefix='/api/v1')
@@ -89,13 +96,13 @@ def register_error_handlers(app):
 def configure_jwt(app):
     """配置JWT回调函数"""
 
-    @jwt.token_in_blocklist_loader
-    def check_if_token_revoked(jwt_header, jwt_payload):
-        """检查token是否被撤销（黑名单机制）"""
-        from app.services.token_service import TokenService
-
-        jti = jwt_payload['jti']  # JWT ID
-        return TokenService.is_token_revoked(jti)
+    # @jwt.token_in_blocklist_loader
+    # def check_if_token_revoked(jwt_header, jwt_payload):
+    #     """检查token是否被撤销（黑名单机制）"""
+    #     from app.services.token_service import TokenService
+    #
+    #     jti = jwt_payload['jti']  # JWT ID
+    #     return TokenService.is_token_revoked(jti)
 
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
