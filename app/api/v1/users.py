@@ -15,22 +15,24 @@ from app.utils import (
     success_response,
     error_response,
     paginate_response,
-    log_api_call
+    business_logger,
+    api_endpoint
 )
-from flask import current_app
 
 users_bp = APIBlueprint('users', __name__, url_prefix='/api/v1/users', tag='用户管理')
 
 
-@log_api_call
 @users_bp.get('/users')
-@users_bp.input(UserQuerySchema, location='query')
-@users_bp.output(ResponseSchema)
 @users_bp.doc(security=[{'Bearer': []}])
-@jwt_required()
+@api_endpoint(
+    bp=users_bp,
+    schema_input=UserQuerySchema,
+    schema_output=ResponseSchema,
+    auth_required=True,
+    log_calls=True
+)
 def get_users(query_data):
     """获取用户列表"""
-    current_app.loggers['business'].warning('访问用户列表测试！！！')
     pagination = UserService.get_users(
         page=query_data.get('page', 1),
         per_page=query_data.get('per_page', 20),

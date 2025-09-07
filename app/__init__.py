@@ -1,5 +1,5 @@
 from apiflask import APIFlask
-from flask import request
+from flask import request, current_app
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
@@ -11,6 +11,9 @@ from app.utils import (
     setup_logging
 )
 from config import config
+from app.middleware import register_all_middleware
+import logging
+from werkzeug.exceptions import HTTPException
 
 # 扩展实例（在应用上下文之外创建）
 db = SQLAlchemy()
@@ -53,7 +56,9 @@ def create_app(config_name='development'):
     register_error_handlers(app)
 
     # 日志
-    app.loggers = setup_logging(app)
+    setup_logging(app)
+
+    register_all_middleware(app)
 
     return app
 
@@ -74,59 +79,131 @@ def register_blueprints(app):
 def register_error_handlers(app):
     """注册错误处理器"""
 
-    @app.errorhandler(404)
-    def not_found(error):
-        return error_response('Resource not found', data={'path': request.path})
-
+    # HTTP 状态码错误处理器
     @app.errorhandler(400)
     def bad_request(error):
-        return error_response('Bad request', data={'description': str(error)})
+        return error_response(
+            msg='Bad request', data={'description': str(error)},
+            status_code=400
+        )
 
-    @app.errorhandler(500)
-    def internal_error(error):
-        # 生产环境不暴露具体错误信息
-        return error_response('Internal server error')
+    @app.errorhandler(403)
+    def forbidden(error):
+        return error_response(
+            msg='Forbidden', data={'description': 'Access denied'},
+            status_code=403
+        )
+
+    @app.errorhandler(404)
+    def not_found(error):
+        return error_response(
+            msg='Resource not found', data={'path': request.path},
+            status_code=404
+        )
 
     @app.errorhandler(422)
     def validation_error(error):
         return error_response(
-            'Validation failed',
-            data={'details': error.detail}
+            msg='Validation failed', data={'details': getattr(error, 'detail', str(error))},
+            status_code=422
         )
+
+    @app.errorhandler(429)
+    def rate_limit_exceeded(error):
+        return error_response(
+            msg='Rate limit exceeded', data={'description': 'Too many requests'},
+            status_code=429
+        )
+
+    # 通用 HTTP 异常处理器
+    @app.errorhandler(HTTPException)
+    def handle_http_exception(error):
+        """处理所有 HTTP 异常"""
+        return error_response(
+            f'HTTP {error.code} Error',
+            data={
+                'code': error.code,
+                'name': error.name,
+                'description': error.description
+            },
+            status_code=error.code
+        )
+
+    # 最重要的：通用异常处理器
+    @app.errorhandler(Exception)
+    def handle_exception(error):
+        """处理所有未捕获的异常"""
+        logger = logging.getLogger('app')
+
+        # 记录详细的错误信息
+        logger.error(
+            f"Unhandled exception in {request.method} {request.path}: {str(error)}",
+            exc_info=True  # 这会记录完整的堆栈跟踪
+        )
+
+        # 判断是否是开发环境
+        if current_app.debug:
+            # 开发环境返回详细错误信息
+            return error_response(
+                'Internal server error',
+                data={
+                    'error_type': type(error).__name__,
+                    'error_message': str(error),
+                    'path': request.path,
+                    'method': request.method
+                },
+                status_code=500
+            )
+        else:
+            # 生产环境返回通用错误信息
+            return error_response(
+                msg='Internal server error',
+                status_code=500
+            )
 
 
 def configure_jwt(app):
     """配置JWT回调函数"""
 
-    # @jwt.token_in_blocklist_loader
-    # def check_if_token_revoked(jwt_header, jwt_payload):
-    #     """检查token是否被撤销（黑名单机制）"""
-    #     from app.services.token_service import TokenService
-    #
-    #     jti = jwt_payload['jti']  # JWT ID
-    #     return TokenService.is_token_revoked(jti)
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        """检查token是否被撤销（黑名单机制）"""
+        from app.services.token_service import TokenService
+
+        token_service = TokenService()
+        jti = jwt_payload['jti']  # JWT ID
+        return token_service.is_token_revoked(jti)
 
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
         """token被撤销时的响应"""
-        return jwt_error_response('Token has been revoked, please login again')
+        return jwt_error_response(
+            msg='Token has been revoked, please login again',
+            status_code=401
+        )
 
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
         """token过期时的响应"""
-        return jwt_error_response('Token has expired'), 401
+        return jwt_error_response(
+            msg='Token has expired',
+            status_code=401
+        )
 
     @jwt.invalid_token_loader
     def invalid_token_callback(error):
         """无效token时的响应"""
-        return jwt_error_response(f'Invalid token signature: {error}'), 401
+        return jwt_error_response(
+            msg=f'Invalid token signature',
+            status_code=401
+        )
 
     @jwt.unauthorized_loader
     def missing_token_callback(error):
         """缺少token时的响应"""
         return jwt_error_response(
             msg='Authorization token required',
-            code=401
+            status_code=401
         )
 
     @jwt.additional_claims_loader

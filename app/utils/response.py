@@ -20,13 +20,14 @@ def success_response(data=None, msg="success", paginate=None):
     return response, 200
 
 
-def error_response(msg="failed", data=None):
+def error_response(msg="failed", data=None, status_code=500):
     """
     错误响应格式
 
     Args:
         msg: 错误消息
         data: 错误详细信息 (可选)
+        status_code: 状态码
     """
     response = {
         "code": 0,
@@ -34,7 +35,7 @@ def error_response(msg="failed", data=None):
         "data": data
     }
 
-    return response, 200
+    return response, status_code
 
 
 def paginate_response(pagination, schema_class, msg="success"):
@@ -61,9 +62,15 @@ def paginate_response(pagination, schema_class, msg="success"):
     return success_response(items, msg, paginate)
 
 
-def jwt_error_response(msg, code=401):
+def jwt_error_response(msg, status_code=401):
+    """
+    jwt认证错误响应格式
+    :param msg:
+    :param status_code:
+    :return:
+    """
     return {
         "code": 0,
         "msg": msg,
         "data": None
-    }, code
+    }, status_code

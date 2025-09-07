@@ -18,13 +18,16 @@ class CustomFormatter(logging.Formatter):
         else:
             record.user_id = 'anonymous'
 
-        # 添加请求上下文
-        if request:
-            record.method = request.method
-            record.url = request.url
-            record.remote_addr = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
-            record.user_agent = request.headers.get('User-Agent', '')
-        else:
+        try:
+            if has_request_context() and request:
+                record.method = request.method
+                record.url = request.url
+                record.remote_addr = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+                record.user_agent = request.headers.get('User-Agent', '')
+            else:
+                record.method = record.url = record.remote_addr = record.user_agent = ''
+        except RuntimeError:
+            # 在应用上下文外访问request时会抛出RuntimeError
             record.method = record.url = record.remote_addr = record.user_agent = ''
 
         record.timestamp = datetime.now().isoformat()
@@ -77,6 +80,10 @@ def setup_logging(app):
         '[%(timestamp)s] %(remote_addr)s - %(user_id)s - "%(method)s %(url)s" - %(message)s'
     ))
 
+    # 生产环境禁用 Werkzeug日志
+    if not app.debug:
+        logging.getLogger('werkzeug').disabled = True
+
     # 开发环境控制台输出
     if app.debug:
         console_handler = logging.StreamHandler()
@@ -113,10 +120,10 @@ def log_api_call(f):
     def decorated_function(*args, **kwargs):
         start_time = time.time()
         access_logger = logging.getLogger('access')
-        app_logger = logging.getLogger('app')
+        # app_logger = logging.getLogger('app')
 
         try:
-            app_logger.info(f"API Request: {request.method} {request.path}")
+            #app_logger.info(f"API Request: {request.method} {request.path}")
             result = f(*args, **kwargs)
 
             duration = (time.time() - start_time) * 1000
@@ -125,8 +132,8 @@ def log_api_call(f):
 
             return result
         except Exception as e:
-            duration = (time.time() - start_time) * 1000
-            app_logger.error(f"API Error: {str(e)} - {duration:.2f}ms")
+            # duration = (time.time() - start_time) * 1000
+            # app_logger.error(f"API Error: {str(e)} - {duration:.2f}ms")
             raise
 
     return decorated_function
